@@ -67,6 +67,10 @@ def groqReply():
     ])  
     return (render_template("groqReply.html", r = r.choices[0].message.content))
 
+@app.route("/equity", methods=['get','post'])
+def equity():
+    return (render_template("equity.html"))
+
 if __name__ == "__main__":
     app.run()
 
