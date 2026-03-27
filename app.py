@@ -3,7 +3,7 @@ import joblib
 import os
 from groq import Groq
 
-#os.environ["GROQ_API_KEY"] = ""
+os.environ["GROQ_API_KEY"] = ""
 
 model = joblib.load("foodexp.pkl")
 
@@ -70,6 +70,10 @@ def groqReply():
 @app.route("/equity", methods=['get','post'])
 def equity():
     return (render_template("equity.html"))
+
+@app.route("/apple", methods=['get','post'])
+def apple():
+    return (render_template("apple.html"))
 
 if __name__ == "__main__":
     app.run()
