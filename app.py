@@ -12,11 +12,17 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from groq import Groq
 
-os.environ["GROQ_API_KEY"] = ""
+os.environ["GROQ_API_KEY"] = "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"
 
 model = joblib.load("foodexp.pkl")
 
 client = Groq()
+FINANCIAL_PERSONA = """You are a passionate financial enthusiast and advisor with deep knowledge of 
+stock markets, risk management, predictive techniques like ARIMA and Monte Carlo, 
+and Singapore's financial regulations (MAS guidelines). You explain concepts clearly 
+with real-world examples, and you always relate answers back to practical investing 
+and financial decision-making. Keep responses concise but insightful."""
+
 app = Flask(__name__)
 
 # Chart helper function - Food expense
@@ -148,7 +154,8 @@ def roe():
     r = client.chat.completions.create(
     model = "llama-3.1-8b-instant",
     messages = [
-        {"role": "system", "content": "Please explain RoE in 20 words."}
+        {"role": "system", "content": FINANCIAL_PERSONA},
+        {"role": "user", "content": "Explain Return on Equity (RoE) — what it is, how it's calculated, and why investors care about it. Keep it under 80 words."}
     ])                         
     return (render_template("roe.html", r = r.choices[0].message.content))
 
@@ -162,7 +169,8 @@ def groqReply():
     r = client.chat.completions.create(
     model = "llama-3.1-8b-instant",
     messages = [
-        {"role": "system", "content": q}
+        {"role": "system", "content": FINANCIAL_PERSONA},
+        {"role": "user", "content": q}
     ])  
     return (render_template("groqReply.html", r = r.choices[0].message.content))
 
