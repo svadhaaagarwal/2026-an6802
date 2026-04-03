@@ -3,10 +3,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h2>Your predicted food expense is {{r}}</h2>
+    <div class="container" style="max-width: 700px;">
+        <h2>Your predicted food expense is ${{ "%.2f"|format(r) }}</h2>
+        <h4>Based on a weekly salary of ${{ "%.0f"|format(q) }}</h4>
+        <img class="image-class" src="data:image/png;base64,{{ chart }}" alt="Salary vs Food Expense Chart">
+        <p>The chart shows how predicted food expenditure changes across different salary levels. The gold dot marks your position.</p>
+        <form action="/econ" method="post">
+            <input type="submit" value="Try Another Salary">
+        </form>
         <form action="/main" method="post">
             <input type="submit" value="Main">
         </form>
     </div>
-</body> 
+</body>

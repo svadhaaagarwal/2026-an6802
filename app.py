@@ -19,6 +19,16 @@ model = joblib.load("foodexp.pkl")
 client = Groq()
 app = Flask(__name__)
 
+# Chart helper function - Food expense
+def chart_to_base64(fig):
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+                facecolor='#FFFFFF', edgecolor='none')
+    buf.seek(0)
+    img_b64 = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close(fig)
+    return img_b64
+
 # Fetch DBS stock data
 def get_dbs_data(period="1y"):
     ticker = yf.Ticker("D05.SI")
@@ -43,17 +53,64 @@ def index():
 def main():
     return (render_template("main.html"))
 
+ethics_questions = [
+    {
+        "id": 1,
+        "question": "A manager can disclose confidential employee information to unauthorized personnel.",
+        "answer": False,
+        "explanation": "Confidential employee data is protected under data privacy laws such as Singapore's PDPA. Sharing it without authorization breaches trust and can result in legal consequences."
+    },
+    {
+        "id": 2,
+        "question": "Accepting gifts from a client in a competitive bidding process is ethically permissible.",
+        "answer": False,
+        "explanation": "Accepting gifts during a bidding process creates a conflict of interest and undermines fair competition. Most corporate codes of conduct and anti-corruption policies strictly prohibit this."
+    },
+    {
+        "id": 3,
+        "question": "It is ethical for a software developer to copy code from an open-source project without attribution if it saves time on a tight deadline.",
+        "answer": False,
+        "explanation": "Open-source licenses require proper attribution. Failing to credit the original author violates intellectual property rights and the terms of the license, regardless of time pressure."
+    },
+    {
+        "id": 4,
+        "question": "A doctor can ethically prioritize treatment based on a patient's ability to pay.",
+        "answer": False,
+        "explanation": "Medical ethics require treatment decisions to be based on clinical need, not financial status. Prioritizing by ability to pay violates the principle of justice and equal access to healthcare."
+    },
+    {
+        "id": 5,
+        "question": "It is ethical for a teacher to grade students differently based on personal liking.",
+        "answer": False,
+        "explanation": "Grading must be based on objective academic criteria. Personal bias in assessment violates principles of fairness and equity, and can constitute discrimination."
+    }
+]
+
 @app.route("/ethics", methods=['get','post'])
-def ethics():
-    return (render_template("ethics.html"))
+@app.route("/ethics/<int:qnum>/<int:score>", methods=['get','post'])
+def ethics(qnum=1, score=0):
+    if qnum < 1 or qnum > len(ethics_questions):
+        qnum = 1
+    q = ethics_questions[qnum - 1]
+    return render_template("ethics.html", q=q, total=len(ethics_questions), score=score)
 
-@app.route("/correct", methods=['get','post'])
-def correct():
-    return (render_template("correct.html"))
-
-@app.route("/wrong", methods=['get','post'])
-def wrong():
-    return (render_template("wrong.html"))
+@app.route("/ethics_answer", methods=['post'])
+def ethics_answer():
+    qnum = int(request.form.get("qnum"))
+    score = int(request.form.get("score"))
+    user_answer = request.form.get("answer") == "True"
+    q = ethics_questions[qnum - 1]
+    is_correct = (user_answer == q["answer"])
+    if is_correct:
+        score += 1
+    next_qnum = qnum + 1 if qnum < len(ethics_questions) else None
+    return render_template("ethics_result.html",
+                           is_correct=is_correct,
+                           q=q,
+                           qnum=qnum,
+                           next_qnum=next_qnum,
+                           total=len(ethics_questions),
+                           score=score)
 
 @app.route("/econ", methods=['get','post'])
 def econ():
@@ -62,8 +119,25 @@ def econ():
 @app.route("/foodExp", methods=['get','post'])
 def foodExp():
     q = float(request.form.get("q"))
-    r = model.predict([[q]])
-    return (render_template("foodExp.html", r=r[0][0]))
+    r = model.predict([[q]])[0][0]
+
+    # Generate salary vs food expense curve
+    salaries = np.linspace(50, 2000, 100)
+    predictions = [model.predict([[s]])[0][0] for s in salaries]
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.plot(salaries, predictions, color='#0F1A2E', linewidth=2, label='Predicted Trend')
+    ax.scatter([q], [r], color='#B8924A', s=120, zorder=5, label=f'You (${q:.0f} → ${r:.2f})')
+    ax.set_xlabel('Weekly Salary (SGD)', fontsize=12)
+    ax.set_ylabel('Predicted Food Expense (SGD)', fontsize=12)
+    ax.set_title('Salary vs Food Expenditure: Model Prediction', fontsize=13, fontweight='bold')
+    ax.legend(fontsize=10)
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+    chart = chart_to_base64(fig)
+
+    return render_template("foodExp.html", r=r, q=q, chart=chart)
 
 @app.route("/chatbot", methods=['get','post'])
 def chatbot():

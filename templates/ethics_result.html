@@ -1,0 +1,41 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        {% if is_correct %}
+            <h2>Congratulations!</h2>
+            <h4>You got Question {{ qnum }} correct.</h4>
+        {% else %}
+            <h2>Oops!</h2>
+            <h4>Sorry, the correct answer for Question {{ qnum }} was {{ "True" if q.answer else "False" }}.</h4>
+        {% endif %}
+
+        <h5>{{ q.explanation }}</h5>
+        
+        <p>Score so far: {{ score }} / {{ qnum }}</p>
+
+        {% if next_qnum %}
+            <form action="/ethics/{{ next_qnum }}/{{ score }}" method="post">
+                <input type="submit" value="Next Question ({{ next_qnum }} of {{ total }})">
+            </form>
+        {% else %}
+            <h2>Final Score: {{ score }} / {{ total }}</h2>
+            {% if score == total %}
+                <h4>Perfect score! You have a strong ethical foundation.</h4>
+            {% elif score >= 3 %}
+                <h4>Good effort! Review the questions you missed and try again.</h4>
+            {% else %}
+                <h4>Needs improvement. Consider revisiting ethical guidelines and try again.</h4>
+            {% endif %}
+        {% endif %}
+
+        <form action="/ethics" method="post">
+            <input type="submit" value="Restart Quiz">
+        </form>
+        <form action="/main" method="post">
+            <input type="submit" value="Main">
+        </form>
+    </div>
+</body>
