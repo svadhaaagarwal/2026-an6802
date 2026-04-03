@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 from groq import Groq
 
-os.environ["GROQ_API_KEY"] = "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"
+#os.environ["GROQ_API_KEY"] = ""
 
 model = joblib.load("foodexp.pkl")
 

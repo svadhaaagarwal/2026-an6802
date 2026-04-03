@@ -5,6 +5,7 @@
 <body>
     <div class="container">
         <h2>Ethical Test: Question {{ q.id }} of {{ total }}</h2>
+        <h4>Test your understanding of professional ethics, data privacy and governance standards across industries.</h4>
         <h4>{{ q.question }}</h4>
         <form action="/ethics_answer" method="post">
             <input type="hidden" name="qnum" value="{{ q.id }}">
