@@ -24,9 +24,6 @@ with real-world examples, and you always relate answers back to practical invest
 and financial decision-making. Keep responses concise but insightful."""
 
 app = Flask(__name__)
-
-# Chart helper function - Food expense
-def chart_to_base64(fig):
     buf = io.BytesIO()
     fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
                 facecolor='#FFFFFF', edgecolor='none')
