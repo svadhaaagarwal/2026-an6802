@@ -1,0 +1,20 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container" style="max-width: 700px;">
+        <h2>DBS Bank: ARIMA Stock Price Prediction</h2>
+        <img class="image-class" src="data:image/png;base64,{{ chart }}" alt="ARIMA Forecast Chart">
+        <h4>Current Price: SGD {{ current }}</h4>
+        <h4>30-Day Forecast: SGD {{ predicted }}</h4>
+        <h4>Expected Change: {{ change }}%</h4>
+        <p>Model: ARIMA(5,1,0) trained on 1 year of daily closing prices. The shaded band represents a ±3% confidence range.</p>
+        <form action="/dbs" method="post">
+            <input type="submit" value="Back to DBS Analysis">
+        </form>
+        <form action="/main" method="post">
+            <input type="submit" value="Main">
+        </form>
+    </div>
+</body>

@@ -1,0 +1,21 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container" style="max-width: 700px;">
+        <h2>DBS Bank: Risk Prediction Analysis</h2>
+        <img class="image-class" src="data:image/png;base64,{{ chart }}" alt="Returns Distribution Chart">
+        <h4>Value at Risk (95%, 1-Day): {{ var_95 }}%</h4>
+        <h4>Sharpe Ratio: {{ sharpe }}</h4>
+        <h4>Annualized Return: {{ annual_return }}%</h4>
+        <h4>Annualized Volatility: {{ annual_std }}%</h4>
+        <p>VaR indicates the maximum expected daily loss at 95% confidence. A Sharpe Ratio above 1.0 suggests good risk-adjusted returns. Risk-free rate: 3.5% (Singapore T-bill rate).</p>
+        <form action="/dbs" method="post">
+            <input type="submit" value="Back to DBS Analysis">
+        </form>
+        <form action="/main" method="post">
+            <input type="submit" value="Main">
+        </form>
+    </div>
+</body>

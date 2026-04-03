@@ -3,3 +3,8 @@ flask
 scikit-learn
 joblib
 groq
+yfinance
+statsmodels
+matplotlib
+numpy
+pandas
