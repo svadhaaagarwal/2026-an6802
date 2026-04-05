@@ -24,13 +24,6 @@ with real-world examples, and you always relate answers back to practical invest
 and financial decision-making. Keep responses concise but insightful."""
 
 app = Flask(__name__)
-    buf = io.BytesIO()
-    fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
-                facecolor='#FFFFFF', edgecolor='none')
-    buf.seek(0)
-    img_b64 = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close(fig)
-    return img_b64
 
 # Fetch DBS stock data
 def get_dbs_data(period="1y"):
